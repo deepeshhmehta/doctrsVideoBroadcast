@@ -1,0 +1,52 @@
+<ion-view cache-view="false" class="records-view">
+    <ion-nav-title>
+        <span>Inventory</span>
+    </ion-nav-title>
+    <ion-content>
+        <ion-list>
+            <div class="row">
+                <div class="col"> <ion-radio ng-model="choice"  ng-click="searchBy(choice)" ng-value="0">By Medicine</ion-radio></div>
+                <div class="col">  <ion-radio ng-model="choice"  ng-click="searchBy(choice)" ng-value="1">By Location</ion-radio></div>
+            </div>
+        </ion-list>
+        <div class="hide"  id="textlocation">
+            <label class="item item-input"  >
+                <input type="text" placeholder="Medicine"  ng-model="medicinename">
+            </label>
+            <div class="txt-center">
+                <button  ng-click="searchByMedicine(medicinename)"  class="button button-positive mt15">Search</button>
+
+            </div>
+        </div>
+        <div class="hide" id="selectlocation">
+            <label class="item item-input item-select " >
+
+                <select class="cselect Ditemselect" name="location" ng-model="healthcenterloc"  ng-init="-1">
+                   
+                    <option ng-repeat="hc in healthCenter"  value="{{hc.id}}" >{{hc.district}}</option>
+                  
+
+                </select>
+            </label>
+
+            <div class="txt-center">
+
+                <button ng-click="searchByLocation(healthcenterloc)"  class="button button-positive mt15">Search location</button>
+                <!--ui-sref="app.search-location"-->
+            </div>
+        </div>
+        <div class="list consultview mt15">
+
+
+
+        </div>
+
+
+    </ion-content>
+
+    <!-- 	<div class="fixedbar">
+        
+            <a class="button btn-add">Add</a>
+            <a class="button btn-share" ui-sref="app.disbursement">Disbursement </a>
+            </div> -->
+</ion-view>

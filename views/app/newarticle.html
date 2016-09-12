@@ -1,0 +1,93 @@
+<ion-view class="category-feeds-view">
+    <ion-nav-title>
+        <span> Text Article  </span>
+    </ion-nav-title>
+    <div class="row tabnav headtab">
+        <div class="col"><span class="nbtn active"  rel="tabone"  >1. Describe</span></div>
+        <div class="col"><span class="nbtn"  rel="tabtwo"  >2. Write Article</span></div>
+        <div class="col"><span class="nbtn" rel="tabthree"  >3. Confirm</span></div>
+    </div>
+    <form name="addNewArticle" id="addNewArticle" enctype="multipart/form-data" novalidate >
+
+        <input type="hidden" name="docid" value="{{doctorId}}"  ng-model="doctorId"/>
+
+        <ion-content> 
+
+
+            <div class="tabcon2 notetab mt60" id="tabone" >
+                <div class="item item-divider mt15">Title</div>
+                <label class="item item-input">
+                    <input type="text" name="title" ng-model="title" placeholder="Title" maxlength="100"  required="" />
+                </label>
+
+                <div class="item item-divider mt15">Description</div>
+
+                <label class="item item-input">
+                    <input type="text" name="desc" ng-model="desc" placeholder="Description" maxlength="200"  required=""/>
+                </label>
+
+                <div class="item item-divider mt15">Header Image</div>
+                <label class="item item-input" >
+                    <input type="file"  name="header_img" ng-model="header_img"  />
+                </label>
+
+                <div class="item item-divider mt15">Share With </div>
+
+                <select name="sharewith" ng-model="sharewith"  class="cselectn" required="">
+                    <option value="" selected="selected" >Please Select</option>
+                    <option  ng-repeat="tg in target_groups" value="{{tg.id}}"> {{tg.target_group}} </option>
+                </select>
+
+                <div class="list">
+                </div>
+            </div>	
+
+            <div class="tabcon2 notetab mt60" id="tabtwo" style="display:none;" >
+                <div class="list">          
+                    <label class="item item-input">
+                        <textarea  col="" rows="10" placeholder="Write your article here" ng-model="content"  name="content"  required=""></textarea>
+                    </label>
+                </div>
+
+
+            </div>	
+
+            <div class="tabcon2 notetab mt60" id="tabthree" style="display:none;" >
+                <div class="item item-divider mt15">Category {{catchoice}} </div>
+                <ion-list>
+                    <ion-checkbox ng-model="catchoice" ng-click="isChecked()"  ng-repeat="cats in category"  ng-checked="catId.indexOf(cats.id) !== -1"  id="check-box-{{$index}}" name="catchoice[]"  ng-value="{{cats.id}}" value="{{cats.id}}">{{cats.specialization}}</ion-checkbox>
+                </ion-list>
+
+            </div>	
+
+
+        </ion-content>
+        <div class="footerbar">
+
+            <div class="tab-buttons">
+                <div class="fixedbar row tbtn active" rel="tabone">
+                    <div class="col button btn-share" ng-click="tabclick('tabtwo')" ng-disabled="addNewArticle.title.$invalid || addNewArticle.desc.$invalid || addNewArticle.sharewith.$invalid">Next</div>
+                </div>
+                <div class="fixedbar row tbtn" rel="tabtwo">
+
+                    <div class="col  button btn-share next" ng-click="tabclick('tabthree')"  ng-disabled="addNewArticle.content.$invalid">Proceed</div>
+                </div>
+                <div  class="fixedbar row tbtn" rel="tabthree">
+
+                    <button type="button" class="col button btn-add"  ng-disabled="checkboxval"  ng-click="submitNewArticle()">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</ion-view>
+
+
+
+
+
+
+
+
+
+

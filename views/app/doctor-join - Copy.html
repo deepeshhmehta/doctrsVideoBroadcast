@@ -1,0 +1,373 @@
+<ion-view class="rjoin-view" >
+    <ion-nav-title>
+        <span> {{user.fname}} {{user.lname}}</span>
+    </ion-nav-title>
+    <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear" ng-click="exitVideo()"> Exit</button>
+    </ion-nav-buttons>
+    <div class="bar bar-subheader cbar" >
+        <div class="row">
+            <div class="col txt-left"><h5> {{appDetails[0].appointments.scheduled_start_time|time1}}</h5></div>
+            <div class="col txt-right"><h5> {{result}}</h5></div>
+            <!--  <div class="addnebtn btn-share ion-medkit" ng-click="inventory();"></div> -->
+            <div class="addnebtn btn-add ion-plus" ng-click="addnote();"></div>
+        </div>
+    </div>
+    <ion-content>
+        <div class="mediascreen mdhight">
+            <!--<iframe class="videochat" ng-src="{{trustSrc(oToken)}}" ></iframe>-->
+            <div id='myPublisherDiv' style="position:absolute;right: 10px;bottom:10px"></div> 
+            <div id='subscribersDiv' class="subscribediv">Waiting for patient to join!</div> 
+        </div>
+        <div class="crighttab greentab" id="cstab1">
+            <div class="ctabbtn" ng-click="pulltab('cstab1')">
+                <span class="ion-chevron-left"></span>
+            </div>
+            <div class="sidetabcontent">
+                <ion-scroll direction="y" class="theroot"> 
+                    <div class="row">
+                        <div class="col maintab">
+                            <select class="cselectn" ng-model="mntab"  ng-change="changemaincate(mntab)">
+                                <option value="ntcase" selected>Case</option>
+                                <option value="ntbackground" >Background</option>
+                                <option value="ntnote" >Notes</option>
+                                <option value="nttreatment" >Treatment</option>
+                            </select>
+                            <div class="col">
+                                <button class="button button-positive" ng-click="submit()">Save All</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sldebxcontent" ng-show="notetcase">
+                        <div ng-include src="'views/app/video-note/note-case.html'" ></div>
+                    </div>
+                    <div class="sldebxcontent" ng-show="notebackground">
+                        <div ng-include src="'views/app/video-note/note-background.html'" ></div>                        
+                    </div>
+                    <div class="sldebxcontent" ng-show="notetnote">
+                        <div ng-include src="'views/app/video-note/notes.html'" ></div>                        	
+                    </div>	
+                    <div class="sldebxcontent" ng-show="notetreatment">
+                        <div ng-include src="'views/app/video-note/treatment-plan.html'" ></div>                        
+                    </div>
+                </ion-scroll>
+            </div>
+        </div>
+
+        <div class="crighttab greentab" id="cstab2" >
+            <!--              <div class="ctabbtn" ng-click="pulltab('cstab2')" style="top:45px;">
+                               <span class="ion-chevron-left"></span>
+                           </div> -->
+            <!--           <div class="sidetabcontent">
+                            <ion-scroll direction="y" class="theroot"> 
+                                <div class="maintab">
+                                    <select class="cselectn" ng-model="ovtab"  ng-change="changeoveview(ovtab)">
+                                        <option value="oabout" selected>About </option>
+                                        <option value="orecord" >Records</option>
+                                        <option value="oconsult" >Consults</option>
+                                        <option value="ochats">Chats</option>
+                                    </select>
+                                </div>
+                                <div class="sldebxcontent" ng-show="ovabout">
+                                  <div ng-include src="'views/app/video-note/overview-about.html'" ></div> 
+                                   
+                                </div>
+                                <div class="sldebxcontent" ng-show="ovrecord">
+                                  <div ng-include src="'views/app/video-note/overview-records.html'" ></div>
+                                   </div>
+                                <div class="sldebxcontent" ng-show="ovconsult">
+                                    <div ng-include src="'views/app/video-note/overview-records.html'" ></div>                         
+                                </div>  
+                                <div class="sldebxcontent" ng-show="ovchats">
+                                    <div ng-include src="'views/app/video-note/overview-records.html'" ></div>                        
+                                </div>
+                            </ion-scroll>
+                        </div>-->
+            <div class="clr"></div>
+        </div>
+    </ion-content>
+    <div class="sticyfooter joinfooter">
+        <div class="tabs tabs-icon-top">
+            <div class="tab-item muteMic"  onclick="classtoggle(this)">
+                <i class="icon ion-ios-mic"></i>
+                <i class="icon ion-ios-mic-off"></i>
+                Mic
+            </div>
+            <div class="tab-item muteVideo"   onclick="classtoggle(this)">
+                <i class="icon ion-ios-videocam"></i>
+                Video
+            </div>
+            <!--   <div class="tab-item" onclick="classtoggle(this)" >
+                 <i class="icon ion-videocamera"></i>
+                 Video
+             </div>
+            <a class="tab-item" >
+                 <i class="icon ion-refresh"></i>
+                 Switch
+             </a>
+             <a class="tab-item muteSub" >
+                 <i class="icon ion-volume-low"></i>
+                 Valume
+             </a> -->
+        </div>
+    </div>
+</ion-view>
+
+<form name="addRecordForm" id="addRecordForm" enctype="multipart/form-data" novalidate >
+    <div class="slideupdiv" id="consultnote-slide">
+        <div class="button iframeclose" ng-click="removenoteslide()"> X </div>
+        <button class="button iframesubmit" ng-click="submit()" ng-disabled="addRecordForm.$invalid"> <i class="ion-checkmark"></i>  Save </button>
+        <div class="ctitlebar">Consultation Note</div>
+        <div class="slideupcontent">
+            <!--            <ion-list>  ng-click="removenoteslide()"
+                            <div class="row">
+                                <div class="col cradio">
+                                    <ion-radio ng-model="casetype" name="{{field.name}}" ng-value="'1'"  value="1" ng-change="getCase(casetype)" required>New Case</ion-radio>
+                                </div>
+                                <div class="col cradio"> <ion-radio ng-model="casetype" name="{{field.name}}" ng-value="'0'" value="0" ng-change="getCase(casetype)" required>Ongoing Case</ion-radio></div>
+                            </div>
+                        </ion-list>
+                        <label class="item item-input" id="newcase">
+                            <input type="text" placeholder="Case" name="new-{{field.name}}" ng-model="formCase" >
+                        </label>-->
+            <!--- add note field starts  --->
+            <input type="hidden" ng-model="record.recordUser" value="{{userId}}" name="userId" />
+            <input type="hidden" value="{{patientId}}" name="patientId" />
+            <input type="hidden" value="{{doctorId}}" name="doctorId" />
+            <input type="hidden" value="{{appId}}" name="appId" />
+            <input type="hidden" value="{{measurement}}" name="measurement" />
+            <input type="hidden" value="{{objId}}" name="objId" />
+            <input type="hidden" value="{{diaId}}" name="diaId" />
+            <input type="hidden" value="{{testId}}" name="testId" />
+            <input type="hidden" value="{{measurement}},{{objId}},{{diaId}},{{testId}}" name="noteRecs" />
+            <input type="hidden" value="{{recId}}" name="recId" />
+            <input type="hidden" value="Consultation" name="rectype" />
+            <input type="hidden" ng-model="record.recordCat" value="{{record.id}}" name="recordCat" />
+            <div class="fields" ng-repeat="field in fields">                    
+                <div ng-if="field.field == 'Case Id'">
+                    <div ng-if="caseId != ''">
+                        <ion-list>
+                            <div class="row">
+                                <div class="col cradio"><ion-radio ng-model="casetype" name="{{field.name}}" ng-value="'1'"  value="1" ng-change="getCase(casetype)" required>New Case</ion-radio></div>
+                                <div class="col cradio"> <ion-radio ng-model="casetype" name="{{field.name}}" ng-value="'0'" value="0" ng-change="getCase(casetype)" ng-checked="true" required>Ongoing Case</ion-radio></div>
+                            </div>
+                        </ion-list>
+                        <label class="item item-input item-select" id="precase">
+                            <div class="input-label">{{field.field}}</div>
+                            <select name="pre-{{field.name}}" ng-model="cases">
+                                <option value="" >Select </option>
+                                <option ng-repeat="case in cases" value="{{case.record_id}}" ng-selected="{{case.record_id == caseId}}">{{case.value}}</option>
+                            </select>
+                        </label>
+                        <label class="item item-input hide" id="newcase">
+                            <input type="text" placeholder="Case" name="new-{{field.name}}" ng-model="formCase" >
+                        </label>
+                    </div>
+                    <div ng-if="caseId == ''">
+                        <ion-list>
+                            <div class="row">
+                                <div class="col cradio"><ion-radio ng-model="casetype" name="{{field.name}}" ng-value="'1'"  value="1" ng-change="getCase(casetype)" required>New Case</ion-radio></div>
+                                <div class="col cradio"> <ion-radio ng-model="casetype" name="{{field.name}}" ng-value="'0'" value="0" ng-change="getCase(casetype)" required>Ongoing Case</ion-radio></div>
+                            </div>
+                        </ion-list>
+                        <label class="item item-input item-select hide" id="precase">
+                            <div class="input-label">{{field.field}}</div>
+                            <select name="pre-{{field.name}}">
+                                <option value="" >Select </option>
+                                <option ng-repeat="case in cases" value="{{case.record_id}}" ng-selected="{{case.record_id == caseId}}">{{case.value}}</option>
+                            </select>
+                        </label>
+                        <label class="item item-input hide" id="newcase">
+                            <input type="text" placeholder="Case" name="new-{{field.name}}" ng-model="formCase" >
+                        </label>
+                    </div>
+                </div>
+                <div ng-if="field.field != 'Case Id'">
+                    <div ng-if="field.field == 'Valid till'">
+                        <label class="item item-input listreq hide" id="convalid"><span class='input-label'>{{field.field}} </span>
+                            <input type="date" ng-model="curTime" placeholder="{{field.field}}" value="{{curTime|dateFormat3}}"  name="{{field.name}}" />                            
+                        </label> 
+                    </div>
+                    <label class="item item-input item-select hide" ng-if="field.field == 'Includes Prescription'" id="coninprec">
+                        <div class="input-label" > {{field.field}}</div>
+                        <select class="cselect" ng-model="prescription" ng-init="selData = (field.field_values).split(',')" name="{{field.name}}" ng-change="getPrescription(prescription)">
+                            <option value="0"> Select {{field.field}}</option>
+                            <option ng-repeat="sel in selData" value="{{sel}}" ng-selected="{{sel == prescription}}"> {{sel}} </option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <!--- Add note field ends  ----->
+            <div class="mt15">
+                <div class="row tabnav bgwhite">
+                    <div class="col brdrht"><a class="nbtn ion-image" onclick="showpopup('selectfile')" > Images</a></div>
+                    <div class="col brdrht"><a class="nbtn ion-medkit" onclick="showpopup('selectnote')"> Notes</a></div>
+                    <div class="col brdrht"><a class="nbtn ion-thermometer" onclick="showpopup('selectappointment')"> Treatment Plan</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ciframecontainer">
+        <div class="closeifrme" ng-click="closeiframe();">X</div>
+        <iframe src=""></iframe>
+    </div>
+</form>
+
+<div class="slideupdiv" id="inventory-slide">
+    <div class="button iframeclose" ng-click="removenoteslide()"> X </div>
+    <button class="button iframesubmit" ng-click="submit()" ng-disabled="addRecordForm.$invalid"> <i class="ion-checkmark"></i>  Save </button>
+    <div class="ctitlebar">Inventory</div>
+    <div class="slideupcontent">
+
+        <div class="" ng-show="invsearcha">
+            <ion-list>
+                <div class="row">
+                    <div class="col"> <ion-radio ng-model="choice"  ng-click="searchBy(choice)" ng-value="0">By Medicine</ion-radio></div>
+                    <div class="col">  <ion-radio ng-model="choice"  ng-click="searchBy(choice)" ng-value="1">By Location</ion-radio></div>
+                </div>
+            </ion-list>
+            <div class="hide"  id="textlocation">
+                <label class="item item-input"  >
+                    <input type="text" placeholder="Medicine"  ng-model="medicinename">
+                </label>
+                <div class="txt-center">
+                    <!--  <button  ng-click="searchByMedicine(medicinename)"  class="button button-positive mt15">Search</button> -->
+
+                    <button  ng-click="golink('#/inventory-search/' + medicinename)"  class="button button-positive mt15">Search</button> 
+
+
+                </div>
+            </div>
+            <div class="hide" id="selectlocation">
+                <label class="item item-input item-select " >
+
+                    <select class="cselect Ditemselect" name="location" ng-model="healthcenterloc">
+                        <option value="">Select Health Centre</option>
+                        <option ng-repeat="hc in healthCenter"  value="{{hc.id}}" >{{hc.district}}</option>
+
+
+                    </select>
+                </label>
+
+                <div class="txt-center">
+
+                    <button  ng-click="golink('#/inventory-location/' + healthcenterloc)"  class="button button-positive mt15">Search</button> 
+                    <!--ui-sref="app.search-location"-->
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+<div class="custpopup-container" id="selectnote">
+    <div class="custpopup">
+        <div class="ncbtn" onclick="close_popup('selectnote')"><i class="ion-close"></i></div>
+        <h3 class="heading3">Background</h3>
+        <div class="row cbtn3">
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dpatient')"><span class="icon ion-plus-circled"></span> Patient</div> 
+            </div>
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dfamily-history')"><span class="icon ion-plus-circled"></span>  Family</div> 
+            </div>
+        </div>
+        <h3 class="heading3">Evaluation</h3>
+        <div class="row cbtn3">
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dmeasurement/mid')"><span class="icon ion-plus-circled"></span> Measurements</div> 
+            </div>
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dtestresult')"> <span class="icon ion-plus-circled"></span> Test Results</div> 
+            </div>
+        </div>  
+        <div class="row cbtn3">
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dobservation/objid')"> <span class="icon ion-plus-circled"></span> Observations</div> 
+            </div>
+        </div>
+        <h3 class="heading3">Diagnosis</h3>
+        <div class="row cbtn3">
+            <div class="col">
+                <div class="Cstmbutn button-small"  ng-click="golink('#/dsnomed')"><span class="icon ion-plus-circled"></span> SNOMED</div> 
+            </div>
+
+            <div class="col">
+                <div class="Cstmbutn button-small"  ng-click="golink('#/dicd')"><span class="icon ion-plus-circled"></span> ICD</div> 
+            </div>
+        </div>       
+        <div class="row cbtn3">
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dtext/diaid')"> <span class="icon ion-plus-circled"></span> Text</div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="custpopup-container" id="selectappointment">
+    <div class="custpopup">
+        <div class="ncbtn" onclick="close_popup('selectappointment')"><i class="ion-close"></i></div>
+        <h3 class="heading3">Treatment Plan</h3>  
+        <div class="row cbtn3">
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dinvestigations')"><span class="icon ion-plus-circled"></span> Investigation</div> 
+            </div>
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dmedication')"><span class="icon ion-plus-circled"></span> Medication</div> 
+            </div>
+        </div>
+        <div class="row cbtn3 ">
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dprocedure')"><span class="icon ion-plus-circled"></span> Procedure</div> </div>
+
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/ddietplan')"> <span class="icon ion-plus-circled"></span> Diet Plan</div> 
+            </div>
+        </div>
+        <div class="row cbtn3">
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dlifestyle')"><span class="icon ion-plus-circled"></span> Lifestyle</div> 
+            </div>
+            <div class="col">
+                <div class="Cstmbutn button-small" ng-click="golink('#/dreferral')"><span class="icon ion-plus-circled"></span> Referral</div> 
+            </div>
+        </div>
+    </div>
+</div>
+<script id="filesview.html" type="text/ng-template">
+    <div class="modal">
+    <header class="bar bar-header bar-positive">
+    <h1 class="title">Attached Files</h1>
+    <button class="button" ng-click="print()">Print</button>
+    </header>
+    <content has-header="true" padding="true" class="fullwh">
+    <div class="mcontent">
+    <div class="viewattachfile" ng-repeat="attach in cnAttachments">
+    <img src="{{attachpath}}{{attach.attachment_path}}{{attach.orginial_name}}" style="border-bottom: 1px #eee solid; margin-bottom: 5px; padding: 5px 5px;"/>
+    </div>
+    </div>
+    </content>
+    <div class="bar bar-footer" style="z-index:999;"><div class="button button-positive" style="width:100%;" ng-click="modal.hide()">Cancel</div></div>
+</script>
+<script id="file.html" type="text/ng-template">
+    <div class="modal">
+    <header class="bar bar-header bar-positive">
+    <h1 class="title">Attached Files</h1>
+    <button class="button" ng-click="print()">Print</button>
+    </header>
+    <content has-header="true" padding="true" class="fullwh">
+    <div class="mcontent">
+    <!-- <iframe  type="text/html" style="width:100%; position:absolute; height:80%; top:100px;" scrolling="yes" ng-src="{{trustSrc(value)}}" allowfullscreen frameborder="0">       
+    </iframe> -->
+    <div class="viewattachfile">
+    <img src="{{value}}">
+    </div>
+    </div>
+    </content>
+    <div class="bar bar-footer" style="z-index:999;"><div class="button button-positive" style="width:100%;" ng-click="modal.hide()">Cancel</div></div>
+</script>

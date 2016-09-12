@@ -1,0 +1,16 @@
+<div class="tcontent" ng-controller="DiagnosisTextCtrl">
+    <div class="item item-divider">Diagnosis</div> 	
+    <label class="item item-input">
+        <textarea rows="4" placeholder="Enter" ng-model="diaText.Value"></textarea>	
+    </label>            
+    <div class="row">
+        <div class="col">
+            <button class="button button-block button-positive" ng-click="saveDDiagnosis(diaText.value)">Save</button>
+        </div>
+<!--        <div class="col">
+            <button class="button button-block button-assertive" ng-click="modal.hide()">Cancel</button>
+        </div>-->
+    </div>
+</div>
+
+
