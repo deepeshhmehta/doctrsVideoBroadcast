@@ -3309,7 +3309,7 @@ angular.module('your_app_name.controllers', [])
             $http({
                 method: 'GET',
                 url: domain + 'get-dr-homemenu',
-                params: {id: $scope.userId, interface: $scope.interface}
+                params: {id: get('id'), interface: $scope.interface}
             }).then(function successCallback(response) {
                 $ionicLoading.hide();
                 if (response.data) {
