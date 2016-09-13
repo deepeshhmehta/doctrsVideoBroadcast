@@ -1307,8 +1307,15 @@ angular.module('your_app_name.controllers', [])
         })
         
         .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading) {
-            $scope.category_sources = [];
-            $scope.categoryId = $stateParams.categoryId;
+            $http({
+                method: 'GET',
+                url: domain + 'video-broadcast-list',
+                params: {}
+            }).then(function successCallback(response) {
+                console.log('halo');
+                console.log(response.data);
+                $scope.videoBroadcastList = response.data;
+            })
         })
 
         .controller('DoctorSettingsCtrl', function ($scope, $http, $ionicPlatform, $stateParams, $ionicModal, $ionicLoading, $state) {
