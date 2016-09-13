@@ -1305,6 +1305,11 @@ angular.module('your_app_name.controllers', [])
             $scope.category_sources = [];
             $scope.categoryId = $stateParams.categoryId;
         })
+        
+        .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading) {
+            $scope.category_sources = [];
+            $scope.categoryId = $stateParams.categoryId;
+        })
 
         .controller('DoctorSettingsCtrl', function ($scope, $http, $ionicPlatform, $stateParams, $ionicModal, $ionicLoading, $state) {
             $ionicLoading.show({template: 'Loading..'});
