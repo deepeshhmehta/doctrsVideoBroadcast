@@ -9208,6 +9208,16 @@ span.count-t{    display: inline-block;
                 background: #fff;
                 text-align: center;
                 /* color: #fff; */}
+.btn-video-broadcast{
+                  border-radius: 10px;
+                  border: 2px #ccc solid;
+                  background-color: #fff;
+                  box-shadow: 10px 10px 5px #888888;
+                  text-decoration: none;
+}
+.btn-video-broadcast:hover{
+                  background-color:#007aff;
+}
 .brdradious0{border-radius:0;}
 .camerafile{    position: absolute !important;
                 left: 0;
