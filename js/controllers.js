@@ -1307,6 +1307,7 @@ angular.module('your_app_name.controllers', [])
         })
         
         .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading) {
+            
             $http({
                 method: 'GET',
                 url: domain + 'video-broadcast-list',
@@ -1316,6 +1317,18 @@ angular.module('your_app_name.controllers', [])
                 console.log(response.data);
                 $scope.videoBroadcastList = response.data;
             })
+
+            $scope.startSession = function(val){
+                if(! val == "" ){
+                    $http({
+                    method: 'GET',
+                    url: domain + 'video-start-new-session',
+                    params: {id: window.localStorage.getItem('id'), topic:val}
+                    }).then(function successCallback(response) {
+                                console.log("created");
+                            })
+                }
+            }
         })
 
         .controller('DoctorSettingsCtrl', function ($scope, $http, $ionicPlatform, $stateParams, $ionicModal, $ionicLoading, $state) {

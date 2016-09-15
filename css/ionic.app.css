@@ -9214,6 +9214,7 @@ span.count-t{    display: inline-block;
                   background-color: #fff;
                   box-shadow: 10px 10px 5px #888888;
                   text-decoration: none;
+                  float:left;
 }
 .btn-video-broadcast:hover{
                   background-color:#007aff;
