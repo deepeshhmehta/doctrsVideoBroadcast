@@ -9,15 +9,15 @@
   <br>
   <div>
     <h3 class="box-title">
-    <a href="#/app/video-broadcast" ng-click="startSession(chatTopic)" class="btn-video-broadcast" type="button">Start New Broadcast</a> 
+    <a ng-click="startSession(chatTopic)" class="btn-video-broadcast" type="button">Start New Broadcast</a> 
     &nbsp;&nbsp;
     <input class="btn-video-broadcast" type ="text" name="chatTopic" ng-model="chatTopic" value="chatTopic" />
     </h3>
   </div>
   <br>        
   <div class="list cdetail-list" >
-      <div class="chatlist achat" ng-repeat="vb in videoBroadcastList">
-          <a class="item item-icon-right" ng-click="">
+      <div class="chatlist achat" ng-click="generateToken(vb.id)" ng-repeat="vb in videoBroadcastList">
+          <a class="item item-icon-right">
           <span class="title">{{vb.user.fname}}</span>
           <p class="description">{{vb.topic}}</p>
           </a>
