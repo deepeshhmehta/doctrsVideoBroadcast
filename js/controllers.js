@@ -1307,7 +1307,6 @@ angular.module('your_app_name.controllers', [])
         })
         
         .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading) {
-            
             $http({
                 method: 'GET',
                 url: domain + 'video-broadcast-list',
@@ -1318,16 +1317,31 @@ angular.module('your_app_name.controllers', [])
                 $scope.videoBroadcastList = response.data;
             })
 
+            $scope.generateToken = function(val){
+                $http({
+                        method: 'GET',
+                        url: domain + 'video-broadcast-get-token',
+                        params: {id: val}
+                    }).then(function successCallback(response) {
+                                console.log(response.data);
+                                
+                            })
+
             $scope.startSession = function(val){
                 if(! val == "" ){
                     $http({
-                    method: 'GET',
-                    url: domain + 'video-start-new-session',
-                    params: {id: window.localStorage.getItem('id'), topic:val}
+                        method: 'GET',
+                        url: domain + 'video-broadcast-start-new-session',
+                        params: {id: window.localStorage.getItem('id'), topic:val}
                     }).then(function successCallback(response) {
-                                console.log("created");
+                                console.log(response.data.session_id);                                
+                                $scope.startSession(response.data.id);
+                                window.location.reload();
                             })
                 }
+            }
+
+           
             }
         })
 
