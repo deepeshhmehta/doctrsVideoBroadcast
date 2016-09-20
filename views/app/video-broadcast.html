@@ -9,7 +9,7 @@
   <br>
   <div>
     <h3 class="box-title">
-    <a ng-click="startSession(chatTopic)" class="btn-video-broadcast" type="button">Start New Broadcast</a> 
+    <button  ng-click="startSession(chatTopic)" type="button">Start New Broadcast</button>
     &nbsp;&nbsp;
     <input class="btn-video-broadcast" type ="text" name="chatTopic" ng-model="chatTopic" value="chatTopic" />
     </h3>
@@ -23,5 +23,10 @@
           </a>
       </div>
   </div>
+   <div class="mediascreen mdhight">
+            <!--<iframe class="videochat" ng-src="{{trustSrc(oToken)}}" ></iframe>-->
+            <div id='myPublisherDiv' style="position:absolute;right: 10px;bottom:10px"></div> 
+            <div id='subscribersDiv' class="subscribediv">Waiting for patient to join!</div> 
+        </div>s
   </ion-content>
 </ion-view>

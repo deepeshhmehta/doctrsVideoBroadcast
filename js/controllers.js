@@ -1312,11 +1312,10 @@ angular.module('your_app_name.controllers', [])
                 url: domain + 'video-broadcast-list',
                 params: {}
             }).then(function successCallback(response) {
-                console.log('halo');
-                console.log(response.data);
                 $scope.videoBroadcastList = response.data;
-            })
-
+            });
+            $scope.token='';
+            $scope.session='';
             $scope.generateToken = function(val){
                 $http({
                         method: 'GET',
@@ -1324,10 +1323,16 @@ angular.module('your_app_name.controllers', [])
                         params: {id: val}
                     }).then(function successCallback(response) {
                                 console.log(response.data);
-                                
-                            })
+                                $scope.token = (response.data.token);                                
+                                $scope.initialiseSession(response.data.session);
+                                $scope.session.connect($scope.token);
+                                console.log('success');
+                            });
+                };
+
 
             $scope.startSession = function(val){
+                console.log("session start initiated");
                 if(! val == "" ){
                     $http({
                         method: 'GET',
@@ -1335,14 +1340,171 @@ angular.module('your_app_name.controllers', [])
                         params: {id: window.localStorage.getItem('id'), topic:val}
                     }).then(function successCallback(response) {
                                 console.log(response.data.session_id);                                
-                                $scope.startSession(response.data.id);
-                                window.location.reload();
-                            })
-                }
-            }
+                                $scope.generateToken(response.data.id);
+                               
 
-           
+                            })
+                
             }
+        };
+            $scope.initialiseSession = function(sessionId){
+                var apiKey = '45121182';
+                if (OT.checkSystemRequirements() == 1) {
+                $scope.session = OT.initSession(apiKey, sessionId);
+                //$ionicLoading.hide();
+                } else {
+                //$ionicLoading.hide();
+                alert("Your device is not compatible");
+                }
+                        $scope.session.on({
+                            streamDestroyed: function (event) {
+                                event.preventDefault();
+                                window.clearInterval(statstimer);
+                                statstimer = '';
+                                var subscribers = $scope.session.getSubscribersForStream(event.stream);
+                                console.log('stream distroy: ' + subscribers);
+                                // alert('stream distroy length: ' + subscribers.length);
+                                console.log('on streamDestroyed Destroy reason: ' + event.reason);
+                                // alert('on streamDestroyed  reason: ' + event.reason);
+
+                                jQuery("#subscribersDiv").html("Doctor left the consultation");
+                                $scope.session.unsubscribe();
+                            },
+                            streamCreated: function (event) {
+                                console.log('stream created....');
+                                subscriber = $scope.session.subscribe(event.stream, 'subscribersDiv', {width: "100%", height: "100%", subscribeToAudio: true},
+                                        function (error) {
+                                            if (error) {
+                                                console.log("subscriber Error " + error.code + '--' + error.message);
+                                            } else {
+                                                console.log('Subscriber added.');
+                                                var subscribers2 = $scope.session.getSubscribersForStream(event.stream);
+                                                console.log('Subscriber length.' + subscribers2.length);
+                                                // alert('APK Subscriber length.' + subscribers2.length)
+                                                console.log('stream created: ' + subscribers2);
+
+                                                var prevStats;
+                                                statstimer = window.setInterval(function () {
+                                                    subscriber.getStats(function (error, stats) {
+                                                        if (error) {
+                                                            console.error('Error getting subscriber stats. ', error.message);
+                                                            return;
+                                                        }
+                                                        if (prevStats) {
+                                                            var videoPacketLossRatio = stats.video.packetsLost /
+                                                                    (stats.video.packetsLost + stats.video.packetsReceived);
+                                                            console.log('video packet loss ratio: ', videoPacketLossRatio);
+                                                            var videoBitRate = 8 * (stats.video.bytesReceived - prevStats.video.bytesReceived);
+                                                            console.log('video bit rate: ', videoBitRate, 'bps');
+                                                            var audioPacketLossRatio = stats.audio.packetsLost /
+                                                                    (stats.audio.packetsLost + stats.audio.packetsReceived);
+                                                            console.log('audio packet loss ratio: ', audioPacketLossRatio);
+                                                            var audioBitRate = 8 * (stats.audio.bytesReceived - prevStats.audio.bytesReceived);
+                                                            console.log('audio bit rate: ', audioBitRate, 'bps');
+                                                            
+                                                        }
+                                                        prevStats = stats;
+                                                    });
+
+                                                }, 5000);
+
+                                            }
+                                        });
+
+                                
+                            },
+                            sessionDisconnected: function (event) {
+                                var subscribers3 = $scope.session.getSubscribersForStream(event.stream);
+                                console.log('sessionDisconnected : ' + subscribers3.length);
+                                if (event.reason === 'networkDisconnected') {
+                                    //$ionicLoading.hide();
+                                    alert('You lost your internet connection.'
+                                            + 'Please check your connection and try connecting again.');
+                                    var subscribers4 = $scope.session.getSubscribersForStream(event.stream);
+                                    console.log('sessionDisconnected----1 : ' + subscribers4.length);
+
+
+                                }
+                            }
+                        });
+                        
+                        $scope.session.connect($scope.token, function (error) {
+                            if (error) {
+                                //$ionicLoading.hide();
+                                alert("Error connecting session patient: ", error.code, error.message);
+                            } else {
+                                publisher = OT.initPublisher('myPublisherDiv', {width: "30%", height: "30%"});
+                                $scope.session.publish(publisher, function (error) {
+                                    if (error) {
+                                        //  console.log("publisher Error code/msg: ", error.code, error.message);
+                                    } else {
+                                        publisher.on('streamCreated', function (event) {
+                                            var subscribers5 = $scope.session.getSubscribersForStream(event.stream);
+                                            //console.log('on publish: ' + subscribers5);
+                                            console.log('on publish lenghth.' + subscribers5.length);
+                                            alert('APK on publish lenghth.');
+                                            //  console.log('stream created: ' + subscribers5);
+
+
+                                        });
+
+                                        publisher.on('streamDestroyed', function (event) {
+                                            var subscribers6 = $scope.session.getSubscribersForStream(event.stream);
+                                            console.log('on Destroy: ' + subscribers6);
+                                            // alert('on publisher Destroy: ' + subscribers6.length);
+                                            console.log('on publisher Destroy reason: ' + event.reason);
+                                            // alert('on publisher Destroy reason: ' + event.reason);
+
+                                            // session.unsubscribe();
+                                            subscriber.destroy();
+                                            // console.log("subscriber.destroy" + subscriber.destroy);
+                                            alert("subscriber destroy because publish stream destroyed");
+                                            // session.disconnect()
+                                        });
+
+                                        var mic = 1;
+                                        var mute = 1;
+                                        var mutevideo = 1;
+                                        jQuery(".muteVideo").click(function () {
+
+                                            if (mutevideo == 1) {
+                                                publisher.publishVideo(false);
+                                                mutevideo = 0;
+                                            } else {
+                                                publisher.publishVideo(true);
+                                                mutevideo = 1;
+                                            }
+                                        });
+                                        jQuery(".muteMic").click(function () {
+                                            if (mic == 1) {
+                                                publisher.publishAudio(false);
+                                                mic = 0;
+                                                //$ionicLoading.hide();
+                                            } else {
+                                                publisher.publishAudio(true);
+                                                mic = 1;
+                                                //$ionicLoading.hide();
+                                            }
+                                        });
+                                        jQuery(".muteSub").click(function () {
+                                            if (mute == 1) {
+                                                subscriber.subscribeToAudio(false);
+                                                mute = 0;
+                                                //$ionicLoading.hide();
+                                            } else {
+                                                subscriber.subscribeToAudio(true);
+                                                mute = 1;
+                                                //$ionicLoading.hide();
+                                            }
+                                        });
+
+                                    }
+                                });
+                            }
+                        });
+            }
+           
+            
         })
 
         .controller('DoctorSettingsCtrl', function ($scope, $http, $ionicPlatform, $stateParams, $ionicModal, $ionicLoading, $state) {
