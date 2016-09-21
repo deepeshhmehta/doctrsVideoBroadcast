@@ -1316,23 +1316,32 @@ angular.module('your_app_name.controllers', [])
             });
             $scope.token='';
             $scope.session='';
+            $scope.session_id='';
             $scope.startbroadcast=0;
-            $scope.generateToken = function(val,from){
+            
+            $scope.generateToken = function(val){
+                console.log('generate token');
                 $http({
                         method: 'GET',
                         url: domain + 'video-broadcast-get-token',
-                        params: {id: val}
+                        params: {id: val, user: window.localStorage.getItem('id')}
                     }).then(function successCallback(response) {
                                 console.log(response.data);
                                 $scope.token = (response.data.token);  
                                 console.log('successfully generated token');
-                                $scope.initialiseSession(response.data.session);
+                                //$state.go('app.video-broadcast-stream', {'session_id': $scope.session_id, 'token': $scope.token, 'pubish': $scope.startbroadcast});
                             });
                 };
 
+            $scope.joinSession = function (id,val){
+                console.log('join session called');
+                $scope.session_id = val;
+                console.log('join session is calling');
+                $scope.generateToken(id);
+            }
 
-            $scope.startSession = function(val){
-                console.log("session start initiated");
+            $scope.createSession = function(val){
+                console.log("session create initiated");
                 $scope.startbroadcast =1;
                 if(! val == "" ){
                     $http({
@@ -1340,8 +1349,10 @@ angular.module('your_app_name.controllers', [])
                         url: domain + 'video-broadcast-start-new-session',
                         params: {id: window.localStorage.getItem('id'), topic:val}
                     }).then(function successCallback(response) {
-                                console.log(response.data.session_id);                                                            
-                                $scope.generateToken(response.data.id,1);
+                                console.log(response.data.session_id);
+                                $scope.sesion_id = response.data.session_id; 
+                                console.log('create session is calling');                                                            
+                                $scope.generateToken(response.data.id);
                             })
                 
                 }
