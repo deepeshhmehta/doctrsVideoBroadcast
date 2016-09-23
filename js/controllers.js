@@ -1306,7 +1306,7 @@ angular.module('your_app_name.controllers', [])
             $scope.categoryId = $stateParams.categoryId;
         })
         
-        .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading) {
+        .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state) {
             $http({
                 method: 'GET',
                 url: domain + 'video-broadcast-list',
@@ -1329,7 +1329,7 @@ angular.module('your_app_name.controllers', [])
                                 console.log(response.data);
                                 $scope.token = (response.data.token);  
                                 console.log('successfully generated token');
-                                //$state.go('app.video-broadcast-stream', {'session_id': $scope.session_id, 'token': $scope.token, 'pubish': $scope.startbroadcast});
+                                $state.go('app.video-broadcast-stream', {'session_id': $scope.session_id, 'token': $scope.token, 'publish': $scope.startbroadcast});
                             });
                 };
 
@@ -1350,14 +1350,26 @@ angular.module('your_app_name.controllers', [])
                         params: {id: window.localStorage.getItem('id'), topic:val}
                     }).then(function successCallback(response) {
                                 console.log(response.data.session_id);
-                                $scope.sesion_id = response.data.session_id; 
+                                $scope.session_id = response.data.session_id; 
                                 console.log('create session is calling');                                                            
                                 $scope.generateToken(response.data.id);
                             })
                 
                 }
             };
+                 
+            
+        })
+        .controller('VideoBroadcastStreamCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state) {
+            $scope.session = '';
+            $scope.subscriber;
+            $scope.publisher;
+            $scope.token =  $stateParams.token;
+            $scope.startbroadcast=$stateParams.publish;
+            $scope.sessionID =$stateParams.session_id;
+            
             $scope.initialiseSession = function(sessionId){
+                console.log('initialiseSession started');
                 var apiKey = '45121182';
                 if (OT.checkSystemRequirements() == 1) {
                 $scope.session = OT.initSession(apiKey, sessionId);
@@ -1372,13 +1384,24 @@ angular.module('your_app_name.controllers', [])
                             },
                             streamCreated: function (event) {
                                 console.log('stream created....');
-                                subscriber = $scope.session.subscribe(event.stream, 'subscribersDiv', {width: "100%", height: "100%", subscribeToAudio: true},
+                                $scope.subscriber = $scope.session.subscribe(event.stream, 'mediaDiv', {width: "100%", height: "100%", subscribeToAudio: true},
                                         function (error) {});
+                                console.log('suscriber');
+                                console.log($scope.subscriber);
 
                                 
                             },
                             sessionDisconnected: function (event) {
-                                consolo.log(event.reason);
+                                console.log(event.reason);
+                                 $http({
+                                        method: 'GET',
+                                        url: domain + 'video-broadcast-terminate', 
+                                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id')}
+                                    }).then(function successCallback(response) {
+                                                console.log('terminated session');
+                                                
+                                            })
+                                
                             }
                         });
            
@@ -1388,17 +1411,20 @@ angular.module('your_app_name.controllers', [])
                                 alert("Error connecting session patient: ", error.code, error.message);
                             } else {
                                 if ($scope.startbroadcast == 1 ){
-                                    publisher = OT.initPublisher('myPublisherDiv', {width: "30%", height: "30%"});
-                                    $scope.session.publish(publisher, function (error) {
+                                    console.log('broadcast condition true');
+                                    $scope.publisher = OT.initPublisher('mediaDiv', {width: "100%", height: "100%"});
+                                        console.log('publisher');
+                                        console.log($scope.publisher);
+                                    $scope.session.publish($scope.publisher, function (error) {
                                         if (error) {
                                             //  console.log("publisher Error code/msg: ", error.code, error.message);
                                         } else {
-                                            publisher.on('streamCreated', function (event) {
+                                            $scope.publisher.on('streamCreated', function (event) {
                                                 console.log('streamCreated');
                                                 //  console.log('stream created: ' + subscribers5);
                                             });
 
-                                            publisher.on('streamDestroyed', function (event) {
+                                            $scope.publisher.on('streamDestroyed', function (event) {
                                                 console.log('streamDestroyed');
                                             });
 
@@ -1407,11 +1433,29 @@ angular.module('your_app_name.controllers', [])
                                 }
                             }
                         });
-            }
+            };
+            $scope.exitVideo = function () {
+                console.log('exitvideo called');
+                try {
+                    if($scope.startbroadcast == 1){
+                        $scope.publisher.destroy();
+                    }
+                    else{
+                        $scope.subscriber.destroy();
+                        $scope.session.unsubscribe();
+                    }
+                    
+                    $scope.session.disconnect();
+                    $state.go("app.video-broadcast", {reload: true});
+                } catch (err) {
+                   console.log(err);
+                    }
+                    $state.go("app.video-broadcast", {reload: true});
+                }
+            $scope.initialiseSession($scope.sessionID);
            
             
         })
-
         .controller('DoctorSettingsCtrl', function ($scope, $http, $ionicPlatform, $stateParams, $ionicModal, $ionicLoading, $state) {
             $ionicLoading.show({template: 'Loading..'});
             $scope.userId = window.localStorage.getItem('id');

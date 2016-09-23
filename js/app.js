@@ -1217,6 +1217,16 @@ angular.module('your_app_name', [
                             }
                         }
                     })
+                     .state('app.video-broadcast-stream', {
+                        cache: false,
+                        url: "/video-broadcast-sream/{session_id:string}/{token:string}/{publish:int}",
+                        views: {
+                            'menuContent': {
+                                templateUrl: "views/app/video-broadcast-stream.html",
+                                controller: 'VideoBroadcastStreamCtrl'
+                            }
+                        }
+                    })
                     ;
             // if none of the above states are matched, use this as the fallback
             $urlRouterProvider.otherwise('/auth/walkthrough');
