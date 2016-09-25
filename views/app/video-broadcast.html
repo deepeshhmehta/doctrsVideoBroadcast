@@ -9,18 +9,22 @@
   <br>
   <div>
     <h3 class="box-title">
-    <button  ng-click="createSession(chatTopic)" type="button">Start New Broadcast</button>
+    <button  ng-click="createSession(chatTopic)" type="button">Start Instant Broadcast</button>
+    <button  ng-click="schedule()" type="button">Schedule a Broadcast</button>
     &nbsp;&nbsp;
     <input class="btn-video-broadcast" type ="text" name="chatTopic" ng-model="chatTopic" value="chatTopic" />
     </h3>
   </div>
   <br>        
   <div class="list cdetail-list" >
-      <div class="chatlist achat" ng-click="joinSession(vb.id,vb.session_id)" ng-repeat="vb in videoBroadcastList">
+      <div class="chatlist achat"  ng-repeat="vb in videoBroadcastList">
           <a class="item item-icon-right">
           <span class="title">{{vb.user.fname}}</span>
           <p class="description">{{vb.topic}}</p>
           </a>
+          <br>
+          <button ng-click = "joinSession(vb.id,vb.session_id)" ng-if="vb.start <= date"> Join </button>
+          <br>
       </div>
   </div>
   </ion-content>

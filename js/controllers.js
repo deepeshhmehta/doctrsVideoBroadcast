@@ -1306,7 +1306,7 @@ angular.module('your_app_name.controllers', [])
             $scope.categoryId = $stateParams.categoryId;
         })
         
-        .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state) {
+        .controller('VideoBroadcastCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state,$filter) {
             $http({
                 method: 'GET',
                 url: domain + 'video-broadcast-list',
@@ -1314,11 +1314,16 @@ angular.module('your_app_name.controllers', [])
             }).then(function successCallback(response) {
                 $scope.videoBroadcastList = response.data;
             });
+            
+            $scope.date =$filter('date')(new Date(), 'yyyy-MM-dd HH:mm:ss');
             $scope.token='';
             $scope.session='';
             $scope.session_id='';
             $scope.startbroadcast=0;
             
+            $scope.schedule = function(){$state.go('app.schedule-video-broadcast');}
+
+
             $scope.generateToken = function(val){
                 console.log('generate token');
                 $http({
@@ -1327,22 +1332,26 @@ angular.module('your_app_name.controllers', [])
                         params: {id: val, user: window.localStorage.getItem('id')}
                     }).then(function successCallback(response) {
                                 console.log(response.data);
-                                $scope.token = (response.data.token);  
+                                $scope.token = (response.data.token); 
+                                $scope.session_id = response.data.session;
+                                $scope.owner = response.data.owner;
+                                console.log($scope.owner);
+                                if ($scope.owner == window.localStorage.getItem('id') ){
+                                    $scope.startbroadcast = 1;
+                                } 
+                                console.log($scope.startbroadcast);
                                 console.log('successfully generated token');
                                 $state.go('app.video-broadcast-stream', {'session_id': $scope.session_id, 'token': $scope.token, 'publish': $scope.startbroadcast});
                             });
                 };
 
             $scope.joinSession = function (id,val){
-                console.log('join session called');
                 $scope.session_id = val;
-                console.log('join session is calling');
                 $scope.generateToken(id);
             }
 
             $scope.createSession = function(val){
                 console.log("session create initiated");
-                $scope.startbroadcast =1;
                 if(! val == "" ){
                     $http({
                         method: 'GET',
@@ -1350,8 +1359,7 @@ angular.module('your_app_name.controllers', [])
                         params: {id: window.localStorage.getItem('id'), topic:val}
                     }).then(function successCallback(response) {
                                 console.log(response.data.session_id);
-                                $scope.session_id = response.data.session_id; 
-                                console.log('create session is calling');                                                            
+                                $scope.session_id = response.data.session_id;                                                            
                                 $scope.generateToken(response.data.id);
                             })
                 
@@ -1360,7 +1368,7 @@ angular.module('your_app_name.controllers', [])
                  
             
         })
-        .controller('VideoBroadcastStreamCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state) {
+        .controller('VideoBroadcastStreamCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state,$filter) {
             $scope.session = '';
             $scope.subscriber;
             $scope.publisher;
@@ -1392,16 +1400,15 @@ angular.module('your_app_name.controllers', [])
                                 
                             },
                             sessionDisconnected: function (event) {
-                                console.log(event.reason);
-                                 $http({
+                                console.log(event.reason);     
+                                $http({
                                         method: 'GET',
-                                        url: domain + 'video-broadcast-terminate', 
+                                        url: domain + 'video-broadcast-exit', 
                                         params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id')}
                                     }).then(function successCallback(response) {
-                                                console.log('terminated session');
+                                                console.log('user left');
                                                 
-                                            })
-                                
+                                            })                           
                             }
                         });
            
@@ -1413,8 +1420,6 @@ angular.module('your_app_name.controllers', [])
                                 if ($scope.startbroadcast == 1 ){
                                     console.log('broadcast condition true');
                                     $scope.publisher = OT.initPublisher('mediaDiv', {width: "100%", height: "100%"});
-                                        console.log('publisher');
-                                        console.log($scope.publisher);
                                     $scope.session.publish($scope.publisher, function (error) {
                                         if (error) {
                                             //  console.log("publisher Error code/msg: ", error.code, error.message);
@@ -1434,6 +1439,19 @@ angular.module('your_app_name.controllers', [])
                             }
                         });
             };
+            $scope.endVideo = function(){
+                $http({
+                        method: 'GET',
+                        url: domain + 'video-broadcast-terminate', 
+                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id')}
+                    }).then(function successCallback(response) {
+                                console.log('terminated session');
+                                
+                            })
+
+                $scope.exitVideo();
+
+            }
             $scope.exitVideo = function () {
                 console.log('exitvideo called');
                 try {
@@ -1456,6 +1474,26 @@ angular.module('your_app_name.controllers', [])
            
             
         })
+
+        .controller('VideoBroadcastScheduleCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading, $state, $filter) {
+            $scope.scheduleform ='';
+            $scope.scheduleBroadcast = function(val){
+                val.userid =window.localStorage.getItem('id');
+                console.log(val);
+                var start = $filter('date')(new Date(val.startdt), 'yyyy-MM-dd') + " " + $filter('date')(new Date(val.starttm), 'HH:mm:ss');
+                console.log(start);
+
+                $http({
+                        method: 'GET',
+                        url: domain + 'video-broadcast-start-new-session',
+                        params: {id: window.localStorage.getItem('id'), topic:val.chatTopic,start:start}
+                    }).then(function successCallback(response) {} );               
+
+                
+
+            }
+        })
+
         .controller('DoctorSettingsCtrl', function ($scope, $http, $ionicPlatform, $stateParams, $ionicModal, $ionicLoading, $state) {
             $ionicLoading.show({template: 'Loading..'});
             $scope.userId = window.localStorage.getItem('id');

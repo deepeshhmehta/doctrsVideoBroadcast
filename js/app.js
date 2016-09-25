@@ -1219,11 +1219,21 @@ angular.module('your_app_name', [
                     })
                      .state('app.video-broadcast-stream', {
                         cache: false,
-                        url: "/video-broadcast-sream/{session_id:string}/{token:string}/{publish:int}",
+                        url: "/video-broadcast-stream/{session_id:string}/{token:string}/{publish:int}",
                         views: {
                             'menuContent': {
                                 templateUrl: "views/app/video-broadcast-stream.html",
                                 controller: 'VideoBroadcastStreamCtrl'
+                            }
+                        }
+                    })
+                     .state('app.schedule-video-broadcast', {
+                        cache: false,
+                        url: "/video-broadcast-schedule",
+                        views: {
+                            'menuContent': {
+                                templateUrl: "views/app/video-broadcast-schedule.html",
+                                controller: 'VideoBroadcastScheduleCtrl'
                             }
                         }
                     })
