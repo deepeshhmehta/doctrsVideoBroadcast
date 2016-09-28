@@ -1392,7 +1392,7 @@ angular.module('your_app_name.controllers', [])
                             },
                             streamCreated: function (event) {
                                 console.log('stream created....');
-                                $scope.subscriber = $scope.session.subscribe(event.stream, 'subscribersDiv', {subscribeToAudio: true, insertMode: "append", width: "100%", height: "100%"});
+                                $scope.subscriber = $scope.session.subscribe(event.stream, 'subscribersDiv', {subscribeToAudio: true, insertMode: "append", width: "10%", height: "10%"});
                                 console.log('suscriber');
                                 console.log($scope.subscriber);
 
