@@ -1334,12 +1334,8 @@ angular.module('your_app_name.controllers', [])
                                 console.log(response.data);
                                 $scope.token = (response.data.token); 
                                 $scope.session_id = response.data.session;
-                                $scope.owner = response.data.owner;
-                                console.log($scope.owner);
-                                if ($scope.owner == window.localStorage.getItem('id') ){
-                                    $scope.startbroadcast = 1;
-                                } 
-                                console.log($scope.startbroadcast);
+                                $scope.owner = response.data.owner;                            
+                                console.log("startBC: " + $scope.startbroadcast);                                
                                 console.log('successfully generated token');
                                 $state.go('app.video-broadcast-stream', {'session_id': $scope.session_id, 'token': $scope.token, 'publish': $scope.startbroadcast});
                             });
@@ -1348,6 +1344,10 @@ angular.module('your_app_name.controllers', [])
             $scope.joinSession = function (id,val){
                 $scope.session_id = val;
                 $scope.generateToken(id);
+            }
+            $scope.joinAndPublish = function(vb){
+                $scope.startbroadcast=1; 
+                $scope.joinSession(vb.id,vb.session_id);
             }
 
             $scope.createSession = function(val){
@@ -1392,8 +1392,7 @@ angular.module('your_app_name.controllers', [])
                             },
                             streamCreated: function (event) {
                                 console.log('stream created....');
-                                $scope.subscriber = $scope.session.subscribe(event.stream, 'mediaDiv', {width: "100%", height: "100%", subscribeToAudio: true},
-                                        function (error) {});
+                                $scope.subscriber = $scope.session.subscribe(event.stream, 'subscribersDiv', {subscribeToAudio: true, insertMode: "append", width: "100%", height: "100%"});
                                 console.log('suscriber');
                                 console.log($scope.subscriber);
 
@@ -1418,11 +1417,22 @@ angular.module('your_app_name.controllers', [])
                                 alert("Error connecting session patient: ", error.code, error.message);
                             } else {
                                 if ($scope.startbroadcast == 1 ){
+                                    
+                                    $http({
+                                        method: 'GET',
+                                        url: domain + 'curl-start-broadcast', 
+                                        params: {sessionid: $scope.sessionID}
+                                    }).then(function successCallback(response) {
+                                                console.log('broadCastStarted');
+                                                console.log(response);
+                                                
+                                            })                           
+
                                     console.log('broadcast condition true');
-                                    $scope.publisher = OT.initPublisher('mediaDiv', {width: "100%", height: "100%"});
+                                    $scope.publisher = OT.initPublisher('myPublisherDiv', {width: "30%", height: "30%"});
                                     $scope.session.publish($scope.publisher, function (error) {
                                         if (error) {
-                                            //  console.log("publisher Error code/msg: ", error.code, error.message);
+                                              console.log("publisher Error code/msg: ", error.code, error.message);
                                         } else {
                                             $scope.publisher.on('streamCreated', function (event) {
                                                 console.log('streamCreated');

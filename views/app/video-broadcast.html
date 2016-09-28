@@ -24,6 +24,7 @@
           </a>
           <br>
           <button ng-click = "joinSession(vb.id,vb.session_id)" ng-if="vb.start <= date"> Join </button>
+          <button ng-click = "joinAndPublish(vb)" ng-if="vb.start <= date"> Join and publish </button>
           <br>
       </div>
   </div>
