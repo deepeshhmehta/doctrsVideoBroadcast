@@ -1217,6 +1217,16 @@ angular.module('your_app_name', [
                             }
                         }
                     })
+                     .state('app.video-broadcast-create', {
+                        cache: false,
+                        url: "/video-broadcast-create",
+                        views: {
+                            'menuContent': {
+                                templateUrl: "views/app/video-broadcast-create.html",
+                                controller: 'VideoBroadcastCreateCtrl'
+                            }
+                        }
+                    })
                      .state('app.video-broadcast-stream', {
                         cache: false,
                         url: "/video-broadcast-stream/{session_id:string}/{token:string}/{publish:int}",
@@ -1224,6 +1234,16 @@ angular.module('your_app_name', [
                             'menuContent': {
                                 templateUrl: "views/app/video-broadcast-stream.html",
                                 controller: 'VideoBroadcastStreamCtrl'
+                            }
+                        }
+                    })
+                     .state('app.video-broadcast-interactive', {
+                        cache: false,
+                        url: "/video-broadcast-interactive/{session_id:string}/{token:string}/{publish:int}",
+                        views: {
+                            'menuContent': {
+                                templateUrl: "views/app/video-broadcast-interactive.html",
+                                controller: 'VideoBroadcastInteractiveCtrl'
                             }
                         }
                     })

@@ -1,0 +1,112 @@
+ <ion-view class="settings-view">
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+  <ion-nav-title>
+    <span>Video Broadcast</span>
+  </ion-nav-title>
+  <ion-content>
+  <div class="row tabnav">
+            <div class="col"><a  ui-sref="app.video-broadcast-create" class="active">Create</a></div>            
+            <div class="col"><a ui-sref="app.video-broadcast"   >Broadcasts</a> </div>    
+  </div>
+  <div>
+    <form>
+    <table style="vertical-align: middle;">
+      <tr>
+        <td>
+          <span>Title: </span>
+        </td>
+        <td>
+          <input ng-model="create.broadcastTitle" type = "textarea" required/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span>Description: </span>
+        </td>
+        <td>
+          <textarea ng-model="create.broadcastDescription"  required></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span>Start Date: </span>
+        </td>
+        <td>
+          <input type="date" ng-model ="create.startdt"  required/>
+        </td>
+      </tr>      
+      <tr>
+       <tr>
+        <td>
+          <span>Start Time: </span>
+        </td>
+        <td>
+          <input type="time" ng-model ="create.starttm"  required/>
+        </td>
+      </tr>      
+      <tr>
+        <td>
+          <span>Planned Duration: (in min)</span>
+        </td>
+        <td>
+          <input type="number" ng-model ="create.duration" required/>
+        </td>
+      </tr>     
+      <tr>
+        <td>
+          <span>Viewer Registration</span>
+        </td>
+        <td>
+          <select ng-model = "create.registration" required>
+            <option value='free'>Free</option>
+            <option value ='paid'>Paid</option>
+          </select>
+        </td>
+      </tr> 
+      <tr ng-if="create.registration =='paid'">
+        <td>
+          <span>Rate(if left blank will be considered 0)</span>
+        </td>
+        <td>
+          <input type="number" ng-model="create.rate" required/>
+        </td>
+      </tr> 
+      <tr>
+        <td>
+          <span>No of pubishers: </span>
+        </td>
+        <td>
+         <select ng-model = "create.noOfPublishers" required>
+            <option value='1'>1</option>
+            <option value ='2'>2</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span>Permitted Viewers: </span>
+        </td>
+        <td>
+         <span ng-if="create.noOfPublishers == 1">unlimited</span>
+         <span ng-if="create.noOfPublishers == 2">300</span>
+        </td>
+      </tr>      
+      <tr>  
+       <tr>
+        <td>
+          <span>Broadcast Type: </span>
+        </td>
+        <td>
+         <span ng-if="create.noOfPublishers == 1">stream</span>
+         <span ng-if="create.noOfPublishers == 2">interactive</span>
+        </td>
+      </tr>      
+      <tr>       
+    </table>
+      <button ng-click="submit()">Submit</button>
+    </form>
+  </div>
+  </ion-content>
+</ion-view>
