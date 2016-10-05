@@ -1310,6 +1310,8 @@ angular.module('your_app_name.controllers', [])
             $scope.create={};
             $scope.create['rate'] = 0;
             $scope.create['noOfPublishers'] = 1;
+            $scope.create['duration'] = 60;
+            $scope.create['registration'] = 'free';
             
             $scope.submit = function(){
                 console.log('submission attempted');
@@ -1325,8 +1327,12 @@ angular.module('your_app_name.controllers', [])
                         }).then(function successCallback(response) {
                                     console.log('response');
                                     console.log(response);
+                                    $scope.create = null;
+                                    $scope.create = {};
                                     $state.go('app.video-broadcast');
                                 });
+                }else{
+                    alert('fill correct details');
                 }
             }
 
@@ -1356,8 +1362,23 @@ angular.module('your_app_name.controllers', [])
             $scope.session='';
             $scope.session_id='';
             $scope.startbroadcast=0;
+            $scope.userid = window.localStorage.getItem('id');
+            console.log(new Date(new Date() - (-15*60000)));
             
-            $scope.schedule = function(){$state.go('app.schedule-video-broadcast');}
+            $scope.show = function(val){                
+                $valdate = new Date(val);
+                $checkdate = $filter('date')(new Date($valdate - 15*60000), 'yyyy-MM-dd HH:mm:ss');
+                if ($checkdate<$scope.date){
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+
+            $scope.tooEarly= function(){
+                alert('you can join the broadcast 15 mins prior to the starting time');
+            }
 
 
             $scope.generateToken = function(val){
@@ -1491,7 +1512,7 @@ angular.module('your_app_name.controllers', [])
                                                                 $scope.hlsLink = response.data;
                                                                 $scope.hlsLink = "http://videoplayer.vodobox.com/vodobox_player.php?vid="+$scope.hlsLink+"&img=&play=auto";
                                                                  console.log("link after publish: " + $scope.hlsLink);
-                                                                 jQuery('#iframe_player').attr('src',$scope.hlsLink);
+                                                                 // jQuery('#iframe_player').attr('src',$scope.hlsLink);
                                                                 
                                                             })       
                                                                 
@@ -1499,7 +1520,7 @@ angular.module('your_app_name.controllers', [])
                                             })                           
 
                                     console.log('broadcast condition true');
-                                    $scope.publisher = OT.initPublisher('myPublisherDiv', {width: "30%", height: "30%"});
+                                    $scope.publisher = OT.initPublisher('myPublisherDiv', {width: "100%", height: "100%"});
                                     $scope.session.publish($scope.publisher, function (error) {
                                         if (error) {
                                               console.log("publisher Error code/msg: ", error.code, error.message);

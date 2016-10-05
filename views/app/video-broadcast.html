@@ -12,25 +12,57 @@
           
   </div>
   <br>
-  <div>
+<!--   <div>
     <h3 class="box-title">
     <button  ng-click="createSession(chatTopic)" type="button">Start Instant Broadcast</button>
     <button  ng-click="schedule()" type="button">Schedule a Broadcast</button>
     &nbsp;&nbsp;
     <input class="btn-video-broadcast" type ="text" name="chatTopic" ng-model="chatTopic" value="chatTopic" />
     </h3>
-  </div>
+  </div> -->
   <br>        
   <div class="list cdetail-list" >
-      <div class="chatlist achat"  ng-repeat="vb in videoBroadcastList">
-          <a class="item item-icon-right">
-          <span class="title">{{vb.user.fname}}</span>
-          <p class="description">{{vb.topic}}</p>
-          </a>
-          <br>
-          <button ng-click = "joinSession(vb.id,vb.session_id)" ng-if="vb.start <= date"> Join </button>
-          <button ng-click = "joinAndPublish(vb)" ng-if="vb.start <= date"> Join and publish </button>
-          <br>
+      <div class="list card post-item greenbox"  ng-repeat="vb in videoBroadcastList">
+          <a class="card-content p0">
+                    <div class="row post-heading item item-text-wrap "  ng-class="{'fillbg': vb.owner_id == userid }">
+                        <div class="col col-75">
+                            <h2 class="post-title">{{vb.topic | capitalize}}</h2>
+                            <p class="post-author">
+                                By <span>{{vb.user.fname}}</span><span>  {{vb.start |dateFormat5 }}</span> 
+                            </p>
+                        </div>
+                        <div class="col col-25 ">
+                            <div class="indicater txt-center video">
+                                <i class="icon ion-ios-videocam f20" ng-if="vb.owner_id == userid"></i>
+                                <i class="icon ion-eye f20" ng-if="vb.owner_id !=userid"></i><br/>
+                               {{vb.planned_duration}} mins 
+                            </div> 
+
+                           
+
+                        </div>
+                    </div>
+
+                    <div class="post-content item item-text-wrap" post-content>
+                      <p class="post-excerpt pb10" dynamic-anchor-fix>
+                        {{vb.description}}
+                      </p>     
+                      <a ng-click = "joinSession(vb.id,vb.session_id)" ng-if="(show(vb.start) && vb.owner_id !=userid)" class="button join" style="float:right;">
+                        <i class="icon ion-eye f20" ></i> Join
+                      </a>
+                      <a ng-click = "joinAndPublish(vb)" ng-if="(show(vb.start) && vb.owner_id ==userid)" class="button join" style="float:right;">
+                        <i class="icon ion-ios-videocam f20" ></i> Join
+                      </a>
+                      <a ng-click="tooEarly()" ng-if="(! show(vb.start) && vb.owner_id !=userid)" class="button btn-delete" style="float:right;">
+                        <i class="icon ion-eye f20" ></i> Join
+                      </a>
+                      <a ng-click="tooEarly()" ng-if="(! show(vb.start) && vb.owner_id == userid)" class="button btn-delete" style="float:right;">
+                        <i class="icon ion-ios-videocam f20" ></i> Join
+                      </a>                                                                          
+                    </div>
+                    
+                </a>
+
       </div>
   </div>
   </ion-content>
