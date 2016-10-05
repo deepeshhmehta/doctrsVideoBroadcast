@@ -12,100 +12,88 @@
   </div>
   <div>
     <form>
-    <table style="vertical-align: middle;">
-      <tr>
-        <td>
-          <span>Title: </span>
-        </td>
-        <td>
-          <input ng-model="create.broadcastTitle" type = "textarea" required/>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <span>Description: </span>
-        </td>
-        <td>
-          <textarea ng-model="create.broadcastDescription"  required></textarea>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <span>Start Date: </span>
-        </td>
-        <td>
-          <input type="date" ng-model ="create.startdt"  required/>
-        </td>
-      </tr>      
-      <tr>
-       <tr>
-        <td>
-          <span>Start Time: </span>
-        </td>
-        <td>
-          <input type="time" ng-model ="create.starttm"  required/>
-        </td>
-      </tr>      
-      <tr>
-        <td>
-          <span>Planned Duration: (in min)</span>
-        </td>
-        <td>
-          <input type="number" ng-model ="create.duration" required/>
-        </td>
-      </tr>     
-      <tr>
-        <td>
-          <span>Viewer Registration</span>
-        </td>
-        <td>
-          <select ng-model = "create.registration" required>
-            <option value='free'>Free</option>
-            <option value ='paid'>Paid</option>
-          </select>
-        </td>
-      </tr> 
-      <tr ng-if="create.registration =='paid'">
-        <td>
-          <span>Rate(if left blank will be considered 0)</span>
-        </td>
-        <td>
+  
+          <div class="item item-divider"><span>Title: </span></div>
+     
+          <label class="item item-input listreq">
+            <input ng-model="create.broadcastTitle" type = "text" required/>
+          </label>
+    
+          <div class="item item-divider"><span>Description: </span></div>
+   
+          <label class="item item-input listreq">
+            <textarea ng-model="create.broadcastDescription"  required></textarea>
+          </label>
+    
+          <div class="item item-divider"><span>Start Date: </span></div>
+   
+        <label class="item item-input listreq">
+            <input type="date" ng-model ="create.startdt"  required/>
+        </label>
+          
+     
+          <div class="item item-divider"><span>Start Time: </span></div>
+     
+        <label class="item item-input listreq">
+            <input type="time" ng-model ="create.starttm"  required/>
+        </label>          
+   
+          <div class="item item-divider"><span>Planned Duration: (in min)</span></div>
+  
+          <label class="item item-input listreq">
+            <input type="number" ng-model ="create.duration" required/>
+          </label>
+   
+          <div class="item item-divider"><span>Viewer Registration</span></div>
+    
+          <label class="item item-list listreq">
+            <select ng-model = "create.registration" class ="cselect" required>
+              <option value='free'>Free</option>
+              <option value ='paid'>Paid</option>
+            </select>
+          </label>
+       
+          <div class="item item-divider" ng-if="create.registration =='paid'"><span>Rate</span></div>
+     
+        <label class="item item-input listreq" ng-if="create.registration =='paid'">
           <input type="number" ng-model="create.rate" required/>
-        </td>
-      </tr> 
-      <tr>
-        <td>
-          <span>No of pubishers: </span>
-        </td>
-        <td>
-         <select ng-model = "create.noOfPublishers" required>
+        </label>
+        
+        <div class="item item-divider">No of publishers: </div>
+       
+        <label class="item item-list listreq">
+         <select ng-model = "create.noOfPublishers" class="cselect"required>
             <option value='1'>1</option>
             <option value ='2'>2</option>
           </select>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <span>Permitted Viewers: </span>
-        </td>
-        <td>
+        </label>
+        
+        <div class="item item-divider"><span>Permitted Viewers: </span></div>
+        
+       
+        <label class="item item-input listreq">
          <span ng-if="create.noOfPublishers == 1">unlimited</span>
          <span ng-if="create.noOfPublishers == 2">300</span>
-        </td>
-      </tr>      
-      <tr>  
-       <tr>
-        <td>
-          <span>Broadcast Type: </span>
-        </td>
-        <td>
-         <span ng-if="create.noOfPublishers == 1">stream</span>
-         <span ng-if="create.noOfPublishers == 2">interactive</span>
-        </td>
-      </tr>      
-      <tr>       
-    </table>
-      <button ng-click="submit()">Submit</button>
+        </label>        
+       
+
+<!-- <div class="item item-divider">Name*</div>
+<label class="item item-input listreq">
+    <input type="text" placeholder="Name" ng-model="name" name="name" required="" ng-minlength="3" >
+</label>
+
+<div class="item item-divider">Date</div>
+<label class="item item-input listreq">
+    <input type="date" placeholder="Name" ng-model="name" name="name" required="" ng-minlength="3" >
+</label>
+
+<div class="item item-divider">Time</div>
+<label class="item item-input listreq">
+    <input type="time" placeholder="Name" ng-model="name" name="name" required="" ng-minlength="3" >
+</label> -->
+
+
+      <button ng-click="submit()" class="button button-positive button-block">Submit</button>
     </form>
   </div>
   </ion-content>

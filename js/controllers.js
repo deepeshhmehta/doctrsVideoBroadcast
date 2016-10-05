@@ -1308,6 +1308,8 @@ angular.module('your_app_name.controllers', [])
 
         .controller('VideoBroadcastCreateCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state,$filter) {
             $scope.create={};
+            $scope.create['rate'] = 0;
+            $scope.create['noOfPublishers'] = 1;
             
             $scope.submit = function(){
                 console.log('submission attempted');
@@ -1408,6 +1410,8 @@ angular.module('your_app_name.controllers', [])
             
         })
         .controller('VideoBroadcastStreamCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state,$filter) {
+            $scope.exitInitiated = 0;
+            $scope.exitcalled = 0;
             $scope.session = '';
             $scope.subscriber;
             $scope.publisher;
@@ -1451,14 +1455,17 @@ angular.module('your_app_name.controllers', [])
                             },
                             sessionDisconnected: function (event) {
                                 console.log(event.reason);     
-                                $http({
-                                        method: 'GET',
-                                        url: domain + 'video-broadcast-exit', 
-                                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id'), matchcode: window.localStorage.getItem('matchCode') }
-                                    }).then(function successCallback(response) {
-                                                console.log('user left');
-                                                
-                                            })                           
+                                if($scope.exitcalled == 0){
+                                    $scope.exitcalled = 1;
+                                    $http({
+                                            method: 'GET',
+                                            url: domain + 'video-broadcast-exit', 
+                                            params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id'), matchcode: window.localStorage.getItem('matchCode'),exit: $scope.exitInitiated }
+                                        }).then(function successCallback(response) {
+                                                    console.log('user left');
+                                                    
+                                                })                           
+                                }
                             }
                         });
            
@@ -1513,10 +1520,11 @@ angular.module('your_app_name.controllers', [])
                         });
             };
             $scope.endVideo = function(){
+                $scope.exitInitiated = 1;
                 $http({
                         method: 'GET',
                         url: domain + 'video-broadcast-terminate', 
-                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id')}
+                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id'),exit: $scope.exitInitiated}
                     }).then(function successCallback(response) {
                                 console.log('terminated session');
                                 
@@ -1526,17 +1534,10 @@ angular.module('your_app_name.controllers', [])
 
             }
             $scope.exitVideo = function () {
+                $scope.exitInitiated = 1;
                 console.log('exitvideo called');
-                try {
-                    if($scope.startbroadcast == 1){
-                        $scope.publisher.destroy();
-                    }
-                    else{
-                        $scope.subscriber.destroy();
-                        $scope.session.unsubscribe();
-                    }
-                    
-                    $scope.session.disconnect();
+                try {                    
+                    $scope.session.disconnect();                  
                     $state.go("app.video-broadcast", {reload: true});
                 } catch (err) {
                    console.log(err);
@@ -1549,6 +1550,8 @@ angular.module('your_app_name.controllers', [])
         })
 
         .controller('VideoBroadcastInteractiveCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state,$filter) {
+            $scope.exitInitiated = 0;
+            $scope.exitcalled = 0;
             $scope.session = '';
             $scope.subscriber;
             $scope.publisher;
@@ -1592,14 +1595,17 @@ angular.module('your_app_name.controllers', [])
                             },
                             sessionDisconnected: function (event) {
                                 console.log(event.reason);     
-                                $http({
-                                        method: 'GET',
-                                        url: domain + 'video-broadcast-exit', 
-                                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id'), matchcode: window.localStorage.getItem('matchCode') }
-                                    }).then(function successCallback(response) {
-                                                console.log('user left');
-                                                
-                                            })                           
+                                if($scope.exitcalled == 0){
+                                    $scope.exitcalled = 1;
+                                    $http({
+                                            method: 'GET',
+                                            url: domain + 'video-broadcast-exit', 
+                                            params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id'), matchcode: window.localStorage.getItem('matchCode'),exit: $scope.exitInitiated }
+                                        }).then(function successCallback(response) {
+                                                    console.log('user left');
+                                                    
+                                                })                           
+                                }
                             }
                         });
            
@@ -1643,10 +1649,11 @@ angular.module('your_app_name.controllers', [])
                         });
             };
             $scope.endVideo = function(){
+                $scope.exitInitiated = 1;
                 $http({
                         method: 'GET',
                         url: domain + 'video-broadcast-terminate', 
-                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id'),matchcode: window.localStorage.getItem('matchCode')}
+                        params: {sessionid: $scope.sessionID, userid: window.localStorage.getItem('id'),matchcode: window.localStorage.getItem('matchCode'),exit:$scope.exitInitiated}
                     }).then(function successCallback(response) {
                                 console.log('terminated session');
                                 
@@ -1656,23 +1663,16 @@ angular.module('your_app_name.controllers', [])
 
             }
             $scope.exitVideo = function () {
+                $scope.exitInitiated = 1;
                 console.log('exitvideo called');
-                try {
-                    if($scope.startbroadcast == 1){
-                        $scope.publisher.destroy();
-                    }
-                    else{
-                        $scope.subscriber.destroy();
-                        $scope.session.unsubscribe();
-                    }
-                    
-                    $scope.session.disconnect();
+                try {                    
+                    $scope.session.disconnect();                  
                     $state.go("app.video-broadcast", {reload: true});
                 } catch (err) {
                    console.log(err);
                     }
                     $state.go("app.video-broadcast", {reload: true});
-                }
+            }
             $scope.initialiseSession($scope.sessionID);
            
             
