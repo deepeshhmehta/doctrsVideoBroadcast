@@ -9032,6 +9032,7 @@ span.count-t{    display: inline-block;
                          line-height: 32px;  }
 .logoutbtn.item.activated{background: none !important; border-color: transparent !important;}
 .join,.startchat{background:#387ef5; color:#fff;}
+.join{line-height:44px !important;}
 .cancel{background:#EF473A; color:#fff;}
 .reschedule,.conduct{background:#579511; color:#fff;}
 .cancel i,.join i,.startchat i,.reschedule i,.conduct i{color:#fff;}
