@@ -1307,6 +1307,14 @@ angular.module('your_app_name.controllers', [])
         })
 
         .controller('VideoBroadcastCreateCtrl', function ($scope, $http, $stateParams, $ionicModal, $ionicLoading,$state,$filter) {
+            $scope.permission = 0;
+            $http({
+                method: 'GET',
+                url: domain + 'video-broadcast-permission',
+                params: {userid:window.localStorage.getItem('id')}
+            }).then(function successCallback(response) {
+                $scope.permission = response.data;
+            });
             $scope.create={};
             $scope.create['rate'] = 0;
             $scope.create['noOfPublishers'] = 1;
